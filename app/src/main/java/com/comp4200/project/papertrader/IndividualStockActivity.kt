@@ -1,6 +1,7 @@
 package com.comp4200.project.papertrader
 
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,8 @@ class IndividualStockActivity : AppCompatActivity() {
     private lateinit var priceTextView: TextView
     private lateinit var tickerTextView: TextView
     private lateinit var totalValTextView: TextView
+    private lateinit var backBtn: Button
+    private lateinit var buyBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +38,8 @@ class IndividualStockActivity : AppCompatActivity() {
         this.priceTextView = findViewById<TextView>(R.id.price)
         this.tickerTextView = findViewById<TextView>(R.id.stockTicker)
         this.totalValTextView = findViewById<TextView>(R.id.totalValue)
+        this.backBtn = findViewById<Button>(R.id.backButton)
+        this.buyBtn = findViewById<Button>(R.id.buyButton)
 
         this.ticker = intent.getStringExtra("STOCK_TICKER") ?: ""   //Needs to be passed when starting activity
 
@@ -49,6 +54,17 @@ class IndividualStockActivity : AppCompatActivity() {
         this.priceTextView.setText("Price per share: $" + userStockModel.price)
         this.tickerTextView.setText(this.ticker)
         this.totalValTextView.setText("Value owned: $" + userStockModel.quantity*userStockModel.price)
+
+
+
+
+        this.backBtn.setOnClickListener{
+
+        }
+
+        this.buyBtn.setOnClickListener{
+
+        }
 
     }
 
