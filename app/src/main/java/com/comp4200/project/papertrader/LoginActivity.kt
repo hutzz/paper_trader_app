@@ -17,7 +17,6 @@ import okhttp3.OkHttpClient
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("MyAppTag", "This is a debug message.")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
@@ -61,7 +60,6 @@ class LoginActivity : AppCompatActivity() {
             apply()
         }
 
-        // Navigate to DashboardActivity correctly placed inside a method
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
         finish()

@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.comp4200.project.papertrader.models.StockDto
 import com.comp4200.project.papertrader.models.UserStockModel
 import com.comp4200.project.papertrader.services.StockService
-import com.squareup.picasso.Picasso
+//import com.squareup.picasso.Picasso
+import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,21 +42,27 @@ class IndividualStockActivity : AppCompatActivity() {
 
         //initialize dto
         this.dto = StockDto("", "", "") //finish later
+        stockService = createStockService()
 
-        var stockData = this.stockService.getStockData(dto)
+        /*lifecycleScope.launch {
+            var stockData = this.stockService.getStockData(dto)
+            // Use the data as needed
+        }*/
+        //var userStockModel = UserStockModel()   //def needs to be replaced
 
-        var userStockModel = UserStockModel()   //def needs to be replaced
-
-        this.quantityTextView.setText("Quantity owned: " + userStockModel.quantity)
+       /* this.quantityTextView.setText("Quantity owned: " + userStockModel.quantity)
         this.priceTextView.setText("Price per share: $" + userStockModel.price)
         this.tickerTextView.setText(this.ticker)
-        this.totalValTextView.setText("Value owned: $" + userStockModel.quantity*userStockModel.price)
+        this.totalValTextView.setText("Value owned: $" + userStockModel.quantity*userStockModel.price)*/
 
     }
+    private fun createStockService(): StockService {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://localhost:5000") // Replace with your actual base URL
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(OkHttpClient())
+            .build()
 
-
-
-
-
-
+        return retrofit.create(StockService::class.java)
+    }
 }

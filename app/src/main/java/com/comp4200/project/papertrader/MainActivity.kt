@@ -1,5 +1,6 @@
 package com.comp4200.project.papertrader
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -46,8 +47,9 @@ class MainActivity : AppCompatActivity() {
             })
         }
 
-        setContentView(R.layout.activity_login)
-
+        if (!isUserLoggedIn()) {
+            startLoginActivity()
+        }
 
         /*setContentView(R.layout.activity_main)
         testView = findViewById(R.id.testView)
@@ -63,6 +65,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }*/
+    }
+    private fun isUserLoggedIn(): Boolean {
+        //for once shared prefs are fully implemented else app doesnt work
+        //val sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE)
+        //val token = sharedPreferences.getString("AuthToken", null)
+        //return !token.isNullOrEmpty()
+        return false
+    }
+    private fun startLoginActivity() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish()
     }
     /*
     private suspend fun fetchStockData(stockDto: StockDto): StockModel {

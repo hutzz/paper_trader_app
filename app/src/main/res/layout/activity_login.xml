@@ -38,8 +38,8 @@
             android:layout_width="match_parent"
             android:layout_height="65dp"
             android:ems="10"
+            android:hint="Username"
             android:inputType="text"
-            android:text="Username"
             android:textColor="#000000" />
 
         <Space
