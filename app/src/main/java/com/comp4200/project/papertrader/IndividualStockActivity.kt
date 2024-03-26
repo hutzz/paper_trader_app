@@ -21,8 +21,6 @@ class IndividualStockActivity : AppCompatActivity() {
     private lateinit var token: String
     private lateinit var ticker: String
     private lateinit var dto: StockDto
-    private var quantityOwned: Int = 0 // Initialize with default value
-    private var stockPrice: Double = 0.0 // Initialize with default value
 
     private lateinit var quantityTextView: TextView
     private lateinit var priceTextView: TextView
