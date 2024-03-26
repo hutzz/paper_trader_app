@@ -6,4 +6,11 @@
     </style>
 
     <style name="Theme.PaperTrader" parent="Base.Theme.PaperTrader" />
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/login_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/pt_logo</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.PaperTrader</item>
+    </style>
+
 </resources>
