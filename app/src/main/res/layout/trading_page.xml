@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <!-- Stock price display -->
+    <TextView
+        android:id="@+id/stockPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Stock Price: $1234.56"
+        android:textSize="18sp"
+        android:layout_marginBottom="8dp" />
+
+    <Spinner
+        android:id="@+id/Item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/action_array" />
+
+    <EditText
+        android:id="@+id/quantityInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter quantity"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/symbolInput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter stock symbol"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/placeOrderButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/color"
+        android:text="Place Order" />
+
+</LinearLayout>
