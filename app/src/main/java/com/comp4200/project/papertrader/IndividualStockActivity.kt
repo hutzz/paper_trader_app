@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.comp4200.project.papertrader.models.StockDto
+import com.comp4200.project.papertrader.models.UserStockModel
 import com.comp4200.project.papertrader.services.StockService
 import com.squareup.picasso.Picasso
 import okhttp3.OkHttpClient
@@ -44,9 +45,12 @@ class IndividualStockActivity : AppCompatActivity() {
 
         var stockData = this.stockService.getStockData(dto)
 
+        var userStockModel = UserStockModel()   //def needs to be replaced
 
-
-
+        this.quantityTextView.setText("Quantity owned: " + userStockModel.quantity)
+        this.priceTextView.setText("Price per share: $" + userStockModel.price)
+        this.tickerTextView.setText(this.ticker)
+        this.totalValTextView.setText("Value owned: $" + userStockModel.quantity*userStockModel.price)
 
     }
 
