@@ -1,9 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- This theme is defined but not customized or closed. If you're not using it, consider removing or commenting it out. -->
+    </style>
+
     <style name="Base.Theme.PaperTrader" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.PaperTrader" parent="Base.Theme.PaperTrader" />
+    <style name="Theme.PaperTrader" parent="Base.Theme.PaperTrader">
+        <!-- This is the theme for your application. -->
+    </style>
+
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/login_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/pt_logo</item>
+        <item name="postSplashScreenTheme">@style/Base.Theme.PaperTrader</item>
+    </style>
 </resources>
