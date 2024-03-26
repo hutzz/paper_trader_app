@@ -66,7 +66,7 @@ class IndividualStockActivity : AppCompatActivity() {
         }
 
         this.buyBtn.setOnClickListener{
-
+            
         }
 
     }
