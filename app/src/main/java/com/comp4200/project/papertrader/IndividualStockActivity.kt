@@ -1,5 +1,6 @@
 package com.comp4200.project.papertrader
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
@@ -59,7 +60,9 @@ class IndividualStockActivity : AppCompatActivity() {
 
 
         this.backBtn.setOnClickListener{
-
+            val intent = Intent(this, DashboardActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
         this.buyBtn.setOnClickListener{
