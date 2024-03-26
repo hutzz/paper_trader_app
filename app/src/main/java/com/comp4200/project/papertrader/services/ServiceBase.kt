@@ -23,12 +23,30 @@ open class ServiceBase (private val client: OkHttpClient) {
         return handleResponse(response, clazz)
     }
     @Throws(IOException::class)
+    suspend fun <T> getJson(url: String, clazz: Class<T>, username: String, password: String): T {
+        val credentials = Credentials.basic(username, password)
+        val request = Request.Builder()
+            .url(url)
+            .header("Authorization", credentials)
+            .build()
+        val response = client.newCall(request).execute()
+        return handleResponse(response, clazz)
+    }
+    @Throws(IOException::class)
     fun <T> postJson(url: String, body: Any, clazz: Class<T>, token: String? = null,): T {
         val json = gson.toJson(body)
         val requestBody = json.toRequestBody("application/json".toMediaType())
         val request = requestBuilder(url, token).post(requestBody).build()
         val response = client.newCall(request).execute()
         return handleResponse(response, clazz)
+    }
+    protected fun <T> getRefreshJson(url: String, token: String): T {
+        val request = Request.Builder()
+            .url(url)
+            .header("x-refresh-token", token)
+            .build()
+        val response = client.newCall(request).execute()
+        return handleResponse(response, MessageModel::class.java) as T
     }
     private fun requestBuilder(url: String, token: String? = null): Request.Builder {
         val builder = Request.Builder().url(url)
@@ -60,6 +78,4 @@ open class ServiceBase (private val client: OkHttpClient) {
         val message = gson.fromJson(responseBodyString, MessageModel::class.java)
         return message?.msg ?: "No message available"
     }
-
-
 }
