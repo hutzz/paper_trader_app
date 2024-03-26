@@ -7,6 +7,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
 import com.google.gson.Gson
 import com.comp4200.project.papertrader.models.MessageModel
+import java.lang.reflect.Type
 
 
 open class ServiceBase (private val client: OkHttpClient) {
@@ -31,6 +32,11 @@ open class ServiceBase (private val client: OkHttpClient) {
             .build()
         val response = client.newCall(request).execute()
         return handleResponse(response, clazz)
+    }
+    fun <T> getJson(url: String, type: Type, token: String? = null): T {
+        val request = requestBuilder(url, token).build()
+        val response = client.newCall(request).execute()
+        return handleResponse(response, type)
     }
     @Throws(IOException::class)
     fun <T> postJson(url: String, body: Any, clazz: Class<T>, token: String? = null,): T {
@@ -63,6 +69,20 @@ open class ServiceBase (private val client: OkHttpClient) {
             Log.i("info", message)
 
             return gson.fromJson(responseBodyString, clazz)
+        } else {
+            throw IOException(getMessage(responseBodyString))
+        }
+    }
+    @Throws(IOException::class)
+    private fun <T> handleResponse(response: Response, type: Type): T {
+        val responseBody = response.body ?: throw IOException("Response body is null")
+        val responseBodyString = responseBody.string()
+
+        if (checkResponse(response)) {
+            val message = getMessage(responseBodyString)
+            Log.i("info", message)
+
+            return gson.fromJson(responseBodyString, type)
         } else {
             throw IOException(getMessage(responseBodyString))
         }
