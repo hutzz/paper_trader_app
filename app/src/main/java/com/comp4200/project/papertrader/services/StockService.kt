@@ -1,5 +1,6 @@
 package com.comp4200.project.papertrader.services
 
+import com.comp4200.project.papertrader.models.BuySellDto
 import com.comp4200.project.papertrader.models.MessageModel
 import okhttp3.OkHttpClient
 import com.comp4200.project.papertrader.models.StockModel
@@ -18,7 +19,12 @@ class StockService(client: OkHttpClient) : ServiceBase(client) {
         val listType: Type = object : TypeToken<List<UserStockModel>>() {}.type
         return getJson(url, listType, token)
     }
-//    suspend fun BuyStock(token: String, stockInfo: UserStockModel): MessageModel {
-//
-//    }
+    suspend fun BuyStock(token: String, stock: BuySellDto): MessageModel {
+        val url = createUrl("/stock/buy")
+        return postJson(url, stock, MessageModel::class.java, token)
+    }
+    suspend fun SellStock(token: String, stock: BuySellDto): MessageModel {
+        val url = createUrl("/stock/sell")
+        return postJson(url, stock, MessageModel::class.java, token)
+    }
 }
