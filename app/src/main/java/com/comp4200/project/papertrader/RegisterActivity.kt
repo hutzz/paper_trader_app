@@ -1,5 +1,6 @@
 package com.comp4200.project.papertrader
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,7 +10,9 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.comp4200.project.papertrader.models.RegisterModel
 import com.comp4200.project.papertrader.services.RegisterService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 
 class RegisterActivity : AppCompatActivity() {
@@ -35,15 +38,26 @@ class RegisterActivity : AppCompatActivity() {
             val client = OkHttpClient()
             val registerService = RegisterService(client)
 
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    val response = registerService.register(registerModel)
-                    Toast.makeText(this@RegisterActivity, response.msg, Toast.LENGTH_SHORT).show()
-                    // Optionally, navigate to the login screen or directly to the dashboard
+                    registerService.register(registerModel)
+                    // If registration succeeds, navigate to LoginActivity on the main thread
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(this@RegisterActivity, "Registration successful!", Toast.LENGTH_SHORT).show()
+                        navigateToLoginActivity()
+                    }
                 } catch (e: Exception) {
-                    Log.e("RegisterError", "Registration failed: ", e)
+                    withContext(Dispatchers.Main) {
+                        Log.e("RegisterError", "Registration failed: ", e)
+                        Toast.makeText(this@RegisterActivity, "Registration failed", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
+    }
+    private fun navigateToLoginActivity() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivity(intent)
+        finish() // Optional: Close RegisterActivity to prevent returning to it on pressing back from LoginActivity
     }
 }
