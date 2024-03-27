@@ -3,6 +3,7 @@ package com.comp4200.project.papertrader
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import android.view.animation.AnimationUtils
 import androidx.lifecycle.lifecycleScope
@@ -43,10 +44,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun isUserLoggedIn(tokenService: TokenService): Boolean {
+    private suspend fun checkTokenExpirationMain(tokenService: TokenService): Boolean {
         return withContext(Dispatchers.IO) {
             val accessToken = tokenService.getAccessToken()
-            accessToken != null && !tokenService.isTokenExpired(accessToken)
+            if (accessToken != null && tokenService.isTokenExpired(accessToken)) {
+                try {
+                    tokenService.refreshTokens()
+                    true // Token refreshed successfully
+                } catch (e: Exception) {
+                    Log.e("main", "Failed to refresh token: $e")
+                }
+            }
+            false // Token is not expired or not available
+        }
+    }
+
+    private suspend fun isUserLoggedIn(tokenService: TokenService): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                checkTokenExpirationMain(tokenService)
+                val accessToken = tokenService.getAccessToken()
+                accessToken != null && !tokenService.isTokenExpired(accessToken)
+            } catch (e: Exception) {
+                Log.e("MainActivity", "Error checking login status: $e")
+                false
+            }
         }
     }
 
