@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.comp4200.project.papertrader.models.LoginModel
 import com.comp4200.project.papertrader.models.TokenModel
 import com.comp4200.project.papertrader.services.LoginService
+import com.comp4200.project.papertrader.services.TokenService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -35,7 +36,7 @@ class LoginActivity : AppCompatActivity() {
                     val loginService = LoginService(client)
                     val tokens = loginService.login(user)
                     withContext(Dispatchers.Main) {
-                        handleLoginSuccess(tokens)
+                        handleLoginSuccess(tokens, client)
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
@@ -53,12 +54,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleLoginSuccess(tokenModel: TokenModel) {
-        val sharedPreferences = getSharedPreferences("YourAppPreferences", MODE_PRIVATE)
-        with(sharedPreferences.edit()) {
-            putString("accessToken", tokenModel.access)
-            putString("refreshToken", tokenModel.refresh)
-            apply()
+    private suspend fun handleLoginSuccess(tokenModel: TokenModel, client: OkHttpClient) {
+        val tokenService = TokenService(client, this@LoginActivity)
+        withContext(Dispatchers.IO) {
+            tokenService.storeTokens(tokenModel)
         }
 
         // Navigate to the DashboardActivity
