@@ -5,21 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_launcher_background"
-        tools:layout_editor_absoluteX="151dp"
-        tools:layout_editor_absoluteY="148dp" />
-
     <TextView
         android:id="@+id/stockTicker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
         tools:layout_editor_absoluteX="176dp"
-        tools:layout_editor_absoluteY="281dp" />
+        tools:layout_editor_absoluteY="154dp" />
 
     <LinearLayout
         android:layout_width="397dp"
@@ -64,8 +56,8 @@
         android:layout_width="397dp"
         android:layout_height="65dp"
         android:orientation="horizontal"
-        tools:layout_editor_absoluteX="11dp"
-        tools:layout_editor_absoluteY="456dp">
+        tools:layout_editor_absoluteX="7dp"
+        tools:layout_editor_absoluteY="458dp">
 
         <EditText
             android:id="@+id/buyQuantity"
