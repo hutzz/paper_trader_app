@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.comp4200.project.papertrader.models.LoginModel
@@ -24,31 +25,31 @@ class LoginActivity : AppCompatActivity() {
         val passwordEditText = findViewById<EditText>(R.id.password_editText)
 
         val loginButton = findViewById<Button>(R.id.loginButton)
+        loginButton.setOnClickListener {
+            val username = usernameEditText.text.toString()
+            val password = passwordEditText.text.toString()
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val user = LoginModel(username, password)
+                    val client = OkHttpClient()
+                    val loginService = LoginService(client)
+                    val tokens = loginService.login(user)
+                    withContext(Dispatchers.Main) {
+                        handleLoginSuccess(tokens)
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Log.e("LoginError", "Login failed: ", e)
+                        Toast.makeText(this@LoginActivity, "Login failed. Invalid username and password combination.", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+
         val registerButton = findViewById<Button>(R.id.registerButton)
         registerButton.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
             startActivity(intent)
-        }
-        loginButton.setOnClickListener {
-            val username = usernameEditText.text.toString()
-            val password = passwordEditText.text.toString()
-            lifecycleScope.launch {
-                try {
-                    val user = LoginModel(username, password)
-                    val client = OkHttpClient()
-                    val tokens = login(user, client)
-                    handleLoginSuccess(tokens)
-                } catch (e: Exception) {
-                    Log.e("LoginError", "Login failed: ", e)
-                }
-            }
-        }
-    }
-
-    private suspend fun login(loginModel: LoginModel, client: OkHttpClient): TokenModel {
-        val loginService = LoginService(client)
-        return withContext(Dispatchers.IO) {
-            loginService.login(loginModel)
         }
     }
 
@@ -60,10 +61,9 @@ class LoginActivity : AppCompatActivity() {
             apply()
         }
 
+        // Navigate to the DashboardActivity
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
         finish()
     }
-
-
 }
