@@ -64,8 +64,8 @@
         android:layout_width="397dp"
         android:layout_height="65dp"
         android:orientation="horizontal"
-        tools:layout_editor_absoluteX="11dp"
-        tools:layout_editor_absoluteY="456dp">
+        tools:layout_editor_absoluteX="7dp"
+        tools:layout_editor_absoluteY="458dp">
 
         <EditText
             android:id="@+id/buyQuantity"
