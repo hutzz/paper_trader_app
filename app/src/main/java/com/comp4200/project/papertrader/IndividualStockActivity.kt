@@ -48,7 +48,6 @@ class IndividualStockActivity : AppCompatActivity() {
 
         //initialize dto
         this.dto = StockDto("", "", "") //finish later
-        stockService = createStockService()
 
         /*lifecycleScope.launch {
             var stockData = this.stockService.getStockData(dto)
@@ -74,14 +73,5 @@ class IndividualStockActivity : AppCompatActivity() {
             
         }
 
-    }
-    private fun createStockService(): StockService {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://localhost:5000") // Replace with your actual base URL
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(OkHttpClient())
-            .build()
-
-        return retrofit.create(StockService::class.java)
     }
 }
