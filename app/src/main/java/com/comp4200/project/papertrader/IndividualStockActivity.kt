@@ -47,19 +47,16 @@ class IndividualStockActivity : AppCompatActivity() {
 
                 var quantityOwned = userStockModel?.quantity ?: 0
 
-
                 quantityTextView.setText("Quantity owned: " + quantityOwned)
                 priceTextView.setText("Price per share: $" + stockData.close)
                 tickerTextView.setText(ticker)
                 totalValTextView.setText("Value owned: $" + quantityOwned * stockData.close)
-
 
                 backBtn.setOnClickListener{
                     val intent = Intent(this@IndividualStockActivity, DashboardActivity::class.java)
                     startActivity(intent)
                     finish()
                 }
-
 
                 buyBtn.setOnClickListener{
                     lifecycleScope.launch {
