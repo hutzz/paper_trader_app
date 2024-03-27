@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
-class TokenService(client: OkHttpClient, private val context: Context) : ServiceBase(client) {
+class TokenService(client: OkHttpClient, private val context: Context) : ServiceBase(client, context) {
     private val accessKey = "token"
     private val refreshKey = "refresh"
     private val gson = Gson()
@@ -39,10 +39,24 @@ class TokenService(client: OkHttpClient, private val context: Context) : Service
         editor.apply()
     }
     suspend fun refreshTokens() {
-        val refresh = getRefreshToken()
-        val newTokens = refresh?.let { getRefreshToken() }
+        try {
+            val url = createUrl("/refresh")
+            val refresh = getRefreshToken()
+            Log.i("token", "access: " + getAccessToken())
+            Log.i("token", "refresh: " + getRefreshToken())
+            val newTokens = refresh?.let { getRefreshJson<TokenModel>(url, it) }
+            if (newTokens != null) {
+                storeTokens(newTokens)
+            }
+            Log.i("token", "new access: " + getAccessToken())
+            Log.i("token", "new refresh: " + getRefreshToken())
+        }
+        catch (e: Exception) {
+            Log.i("TokenService", "issue with refreshing: $e")
+            redirectToLogin()
+        }
     }
-    suspend fun getExpiryTime(token: String): LocalDateTime {
+    private suspend fun getExpiryTime(token: String): LocalDateTime {
         val url = createUrl("/expiry")
         val requestBody = mapOf("token" to token)
         val responseBody = postJson(url, requestBody, Map::class.java)
