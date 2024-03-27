@@ -36,7 +36,7 @@ class RegisterActivity : AppCompatActivity() {
 
             val registerModel = RegisterModel(email, username, password, confirmPassword)
             val client = OkHttpClient()
-            val registerService = RegisterService(client)
+            val registerService = RegisterService(client, this@RegisterActivity)
 
             lifecycleScope.launch(Dispatchers.IO) {
                 try {

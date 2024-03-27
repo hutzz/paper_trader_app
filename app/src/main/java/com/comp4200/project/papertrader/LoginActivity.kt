@@ -33,7 +33,7 @@ class LoginActivity : AppCompatActivity() {
                 try {
                     val user = LoginModel(username, password)
                     val client = OkHttpClient()
-                    val loginService = LoginService(client)
+                    val loginService = LoginService(client, this@LoginActivity)
                     val tokens = loginService.login(user)
                     withContext(Dispatchers.Main) {
                         handleLoginSuccess(tokens, client)

@@ -39,12 +39,12 @@ class DashboardActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val client = OkHttpClient()
-                val userService = UserService(client)
+                val userService = UserService(client, this@DashboardActivity)
                 val tokenService = TokenService(client, this@DashboardActivity)
                 val user = getUserData(userService, tokenService)
                 val accessToken = tokenService.getAccessToken()
                 if (accessToken != null) {
-                    val stockService = StockService(client)
+                    val stockService = StockService(client, this@DashboardActivity)
                     val userStocks = stockService.getUserStockList(accessToken)
                     withContext(Dispatchers.Main) {
                         adapter = StockAdapter(userStocks)

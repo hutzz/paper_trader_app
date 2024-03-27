@@ -24,7 +24,7 @@ class IndividualStockActivity : AppCompatActivity() {
     private val tokenService = TokenService(OkHttpClient(), this@IndividualStockActivity)
     private lateinit var token: String
     private lateinit var dto: StockDto
-    private val stockService = StockService(OkHttpClient())
+    private val stockService = StockService(OkHttpClient(), this@IndividualStockActivity)
     private var quantityTextView = findViewById<TextView>(R.id.quantity)
     private var priceTextView = findViewById<TextView>(R.id.price)
     private var tickerTextView = findViewById<TextView>(R.id.stockTicker)
