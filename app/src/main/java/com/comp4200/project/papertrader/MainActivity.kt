@@ -7,7 +7,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import android.view.animation.AnimationUtils
 import androidx.lifecycle.lifecycleScope
 import com.comp4200.project.papertrader.services.TokenService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 
 class MainActivity : AppCompatActivity() {
@@ -42,8 +44,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private suspend fun isUserLoggedIn(tokenService: TokenService): Boolean {
-        val accessToken = tokenService.getAccessToken()
-        return accessToken != null && !tokenService.isTokenExpired(accessToken)
+        return withContext(Dispatchers.IO) {
+            val accessToken = tokenService.getAccessToken()
+            accessToken != null && !tokenService.isTokenExpired(accessToken)
+        }
     }
 
     private fun startLoginActivity() {
