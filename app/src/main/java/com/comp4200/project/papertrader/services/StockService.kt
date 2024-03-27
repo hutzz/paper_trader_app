@@ -1,5 +1,6 @@
 package com.comp4200.project.papertrader.services
 
+import android.content.Context
 import com.comp4200.project.papertrader.models.BuySellDto
 import com.comp4200.project.papertrader.models.MessageModel
 import okhttp3.OkHttpClient
@@ -9,7 +10,7 @@ import com.comp4200.project.papertrader.models.UserStockModel
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
-class StockService(client: OkHttpClient) : ServiceBase(client) {
+class StockService(client: OkHttpClient, private val context: Context) : ServiceBase(client, context) {
     suspend fun getStockData(stockDto: StockDto): StockModel {
         val url = createUrl("/stock/${stockDto.symbol}")
         return postJson(url, stockDto, StockModel::class.java)
