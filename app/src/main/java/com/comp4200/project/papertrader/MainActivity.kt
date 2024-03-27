@@ -44,33 +44,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun checkTokenExpirationMain(tokenService: TokenService): Boolean {
-        return withContext(Dispatchers.IO) {
-            val accessToken = tokenService.getAccessToken()
-            if (accessToken != null && tokenService.isTokenExpired(accessToken)) {
-                try {
-                    tokenService.refreshTokens()
-                    true // Token refreshed successfully
-                } catch (e: Exception) {
-                    Log.e("main", "Failed to refresh token: $e")
-                }
-            }
-            false // Token is not expired or not available
-        }
-    }
-
     private suspend fun isUserLoggedIn(tokenService: TokenService): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                checkTokenExpirationMain(tokenService)
                 val accessToken = tokenService.getAccessToken()
-                accessToken != null && !tokenService.isTokenExpired(accessToken)
+                tokenService.checkTokenExpiration(accessToken)
+                val refreshedAccessToken = tokenService.getAccessToken()
+                refreshedAccessToken != null && !tokenService.isTokenExpired(refreshedAccessToken)
             } catch (e: Exception) {
                 Log.e("MainActivity", "Error checking login status: $e")
                 false
             }
         }
     }
+
 
     private fun startLoginActivity() {
         val intent = Intent(this, LoginActivity::class.java)
