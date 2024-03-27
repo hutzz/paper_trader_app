@@ -11,6 +11,8 @@ import java.io.IOException
 import com.google.gson.Gson
 import com.comp4200.project.papertrader.models.MessageModel
 import com.comp4200.project.papertrader.models.TokenModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.lang.Exception
 import java.lang.reflect.Type
@@ -26,7 +28,7 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
         return baseUrl + route
     }
     @Throws(IOException::class)
-    fun <T> getJson(url: String, clazz: Class<T>, token: String? = null,): T {
+    suspend fun <T> getJson(url: String, clazz: Class<T>, token: String? = null,): T {
         checkTokenExpiration(token)
         val request = requestBuilder(url, token).build()
         val response = client.newCall(request).execute()
@@ -42,14 +44,14 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
         val response = client.newCall(request).execute()
         return handleResponse(response, clazz)
     }
-    fun <T> getJson(url: String, type: Type, token: String? = null): T {
+    suspend fun <T> getJson(url: String, type: Type, token: String? = null): T {
         checkTokenExpiration(token)
         val request = requestBuilder(url, token).build()
         val response = client.newCall(request).execute()
         return handleResponse(response, type)
     }
     @Throws(IOException::class)
-    fun <T> postJson(url: String, body: Any, clazz: Class<T>, token: String? = null,): T {
+    suspend fun <T> postJson(url: String, body: Any, clazz: Class<T>, token: String? = null,): T {
         checkTokenExpiration(token)
         val json = gson.toJson(body)
         val requestBody = json.toRequestBody("application/json".toMediaType())
@@ -109,7 +111,7 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
         val message = gson.fromJson(responseBodyString, MessageModel::class.java)
         return message?.msg ?: "No message available"
     }
-    private fun isExpired(token: String): Boolean {
+    private suspend fun isExpired(token: String): Boolean {
         val url = createUrl("/expiry")
         val requestBody = mapOf("token" to token)
         val responseBody = postJson(url, requestBody, Map::class.java)
@@ -122,26 +124,30 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
         val currentUtcTime = LocalDateTime.now(ZoneOffset.UTC)
         return expiryTime.isBefore(currentUtcTime)
     }
-    private fun checkTokenExpiration(token: String?) {
-        try {
-            if (token != null) {
-                if (isExpired(token)) {
-                    val url = createUrl("/refresh")
-                    val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
-                    val refresh = sharedPreferences.getString("refresh", null);
-                    val newTokens = getJson(url, TokenModel::class.java, refresh)
-                    val editor = sharedPreferences.edit()
+    suspend fun checkTokenExpiration(token: String?) {
+        if (token != null && isExpired(token)) {
+            try {
+                val url = createUrl("/refresh")
+                val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+                val refresh = sharedPreferences.getString("refresh", null)
+                Log.i("basetoken", "access: ${sharedPreferences.getString("token", null)}")
+                Log.i("basetoken", "refresh: $refresh")
+                val newTokens = refresh?.let { getRefreshJson<TokenModel>(url, it) }
+                val editor = sharedPreferences.edit()
+                if (newTokens != null) {
                     editor.putString("token", newTokens.access)
                     editor.putString("refresh", newTokens.refresh)
-                    editor.apply()
                 }
+                editor.apply()
+                Log.i("basetoken", "new access: ${sharedPreferences.getString("token", null)}")
+                Log.i("basetoken", "new refresh: ${sharedPreferences.getString("refresh", null)}")
+            } catch (e: Exception) {
+                Log.e("error", "refresh error: $e")
+                redirectToLogin()
             }
         }
-        catch (e: Exception) {
-            Log.e("error", "refresh error: " + e)
-            redirectToLogin()
-        }
     }
+
     fun redirectToLogin() {
         val intent = Intent(context, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
