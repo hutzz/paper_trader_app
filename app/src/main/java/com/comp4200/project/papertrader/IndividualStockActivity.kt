@@ -2,6 +2,7 @@ package com.comp4200.project.papertrader
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import com.comp4200.project.papertrader.models.StockDto
 import com.comp4200.project.papertrader.models.UserStockModel
 import com.comp4200.project.papertrader.services.StockService
+import com.comp4200.project.papertrader.services.TokenService
 //import com.squareup.picasso.Picasso
 import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
@@ -20,58 +22,65 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class IndividualStockActivity : AppCompatActivity() {
-
-    private var stockService = StockService(OkHttpClient())
-    private lateinit var token: String
-    private lateinit var ticker: String
-    private lateinit var dto: StockDto
-
-    private lateinit var quantityTextView: TextView
-    private lateinit var priceTextView: TextView
-    private lateinit var tickerTextView: TextView
-    private lateinit var totalValTextView: TextView
-    private lateinit var backBtn: Button
-    private lateinit var buyBtn: Button
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.individual_stock_activity)
 
-        this.quantityTextView = findViewById<TextView>(R.id.quantity)
-        this.priceTextView = findViewById<TextView>(R.id.price)
-        this.tickerTextView = findViewById<TextView>(R.id.stockTicker)
-        this.totalValTextView = findViewById<TextView>(R.id.totalValue)
-        this.backBtn = findViewById<Button>(R.id.backButton)
-        this.buyBtn = findViewById<Button>(R.id.buyButton)
+        lifecycleScope.launch{
 
-        this.ticker = intent.getStringExtra("STOCK_TICKER") ?: ""   //Needs to be passed when starting activity
+            try{
+                val tokenService = TokenService(OkHttpClient(), this@IndividualStockActivity)
+                val token = tokenService.getAccessToken() ?: throw IllegalStateException("Access token is null")
+                var ticker = intent.getStringExtra("STOCK_TICKER") ?: ""
+                var dto = StockDto(ticker, "1d", "1d")                 //finish later. Use close price
+                var stockService = StockService(OkHttpClient())
+                var quantityTextView = findViewById<TextView>(R.id.quantity)
+                var priceTextView = findViewById<TextView>(R.id.price)
+                var tickerTextView = findViewById<TextView>(R.id.stockTicker)
+                var totalValTextView = findViewById<TextView>(R.id.totalValue)
+                var backBtn = findViewById<Button>(R.id.backButton)
+                var buyBtn = findViewById<Button>(R.id.buyButton)
+                var sellBtn = findViewById<Button>(R.id.sellButton)
 
-        //initialize dto
-        this.dto = StockDto("", "", "") //finish later
+                var stockData = stockService.getStockData(dto)
 
-        /*lifecycleScope.launch {
-            var stockData = this.stockService.getStockData(dto)
-            // Use the data as needed
-        }*/
-        //var userStockModel = UserStockModel()   //def needs to be replaced
+                var userStockModel = findStockInList(stockService.getUserStockList(token), ticker)
 
-       /* this.quantityTextView.setText("Quantity owned: " + userStockModel.quantity)
-        this.priceTextView.setText("Price per share: $" + userStockModel.price)
-        this.tickerTextView.setText(this.ticker)
-        this.totalValTextView.setText("Value owned: $" + userStockModel.quantity*userStockModel.price)*/
+                quantityTextView.setText("Quantity owned: " + userStockModel.quantity)
+                priceTextView.setText("Price per share: $" + stockData.close)
+                tickerTextView.setText(ticker)
+                totalValTextView.setText("Value owned: $" + userStockModel.quantity * userStockModel.price)
 
 
+                backBtn.setOnClickListener{
+                    val intent = Intent(this@IndividualStockActivity, DashboardActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
 
+                buyBtn.setOnClickListener{
 
-        this.backBtn.setOnClickListener{
-            val intent = Intent(this, DashboardActivity::class.java)
-            startActivity(intent)
-            finish()
+                }
+
+                sellBtn.setOnClickListener{
+
+                }
+
+            }catch(e: Exception){
+                Log.e("DashboardError", "Failed to get user details: ", e)
+            }
+        }
+    }
+
+    private fun findStockInList(list: List<UserStockModel>, ticker: String): UserStockModel?{
+        var stock: UserStockModel? = null
+        list.forEach { userStockModel ->
+            if(userStockModel.symbol === ticker){
+                stock = userStockModel
+                return@forEach
+            }
         }
 
-        this.buyBtn.setOnClickListener{
-            
-        }
-
+        return stock
     }
 }
