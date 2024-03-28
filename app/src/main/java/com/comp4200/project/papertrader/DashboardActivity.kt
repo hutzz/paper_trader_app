@@ -117,6 +117,14 @@ class DashboardActivity : AppCompatActivity() {
             holder.textViewSymbol.text = stock.symbol
             holder.textViewPrice.text = String.format("$%.2f", stock.price)
             holder.textViewQuantity.text = stock.quantity.toString()
+
+            holder.itemView.setOnClickListener{
+                val intent = Intent(holder.itemView.context, IndividualStockActivity::class.java)
+                intent.putExtra("STOCK_TICKER", stock.symbol)
+                startActivity(intent)
+                finish()
+            }
+
         }
 
         override fun getItemCount() = stockList.size
