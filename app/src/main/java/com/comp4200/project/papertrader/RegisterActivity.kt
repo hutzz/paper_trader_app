@@ -28,7 +28,6 @@ class RegisterActivity : AppCompatActivity() {
             val password = findViewById<EditText>(R.id.passwordEditText).text.toString()
             val confirmPassword = findViewById<EditText>(R.id.confirmPasswordEditText).text.toString()
 
-            // Simple validation
             if (password != confirmPassword) {
                 Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -41,7 +40,6 @@ class RegisterActivity : AppCompatActivity() {
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     registerService.register(registerModel)
-                    // If registration succeeds, navigate to LoginActivity on the main thread
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@RegisterActivity, "Registration successful!", Toast.LENGTH_SHORT).show()
                         navigateToLoginActivity()
@@ -58,6 +56,6 @@ class RegisterActivity : AppCompatActivity() {
     private fun navigateToLoginActivity() {
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
-        finish() // Optional: Close RegisterActivity to prevent returning to it on pressing back from LoginActivity
+        finish()
     }
 }
