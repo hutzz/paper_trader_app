@@ -20,7 +20,7 @@ import okhttp3.OkHttpClient
 
 class IndividualStockActivity : AppCompatActivity() {
 
-    private val ticker = intent.getStringExtra("STOCK_TICKER") ?: ""
+    private lateinit var ticker: String
     private val tokenService = TokenService(OkHttpClient(), this@IndividualStockActivity)
     private lateinit var token: String
     private lateinit var dto: StockDto
@@ -44,6 +44,7 @@ class IndividualStockActivity : AppCompatActivity() {
         lifecycleScope.launch{
 
             try{
+                ticker = intent.getStringExtra("STOCK_TICKER") ?: ""
                 this@IndividualStockActivity.token = tokenService.getAccessToken() ?: throw IllegalStateException("Access token is null")
                 this@IndividualStockActivity.dto = StockDto(ticker, "1d", "1d")                 //finish later. Use close price
                 this@IndividualStockActivity.stockData = stockService.getStockData(dto)
