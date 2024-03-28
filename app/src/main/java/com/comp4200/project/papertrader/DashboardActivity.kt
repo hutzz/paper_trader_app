@@ -62,11 +62,10 @@ class DashboardActivity : AppCompatActivity() {
                         searchForStock(it)
                     }
                 }
-                return true // Return true to indicate that the submission has been handled
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // Implement if you want to do anything while the user types each character
                 return false
             }
         })
@@ -91,7 +90,6 @@ class DashboardActivity : AppCompatActivity() {
                     balanceText.text = "$" + user.balance.toString()
                     val accessToken = tokenService.getAccessToken()
                     if (accessToken != null) {
-                        //val stockService = StockService(client, this@DashboardActivity)
                         val userStocks = stockService.getUserStockList(accessToken)
                         withContext(Dispatchers.Main) {
                             adapter.updateData(userStocks)
@@ -164,7 +162,7 @@ class DashboardActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val tokenService = TokenService(OkHttpClient(), applicationContext)
-                tokenService.deleteTokens()  // Correctly called without parameters
+                tokenService.deleteTokens()
                 val intent = Intent(this@DashboardActivity, LoginActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
@@ -176,22 +174,16 @@ class DashboardActivity : AppCompatActivity() {
         }
     }
     private fun searchForStock(symbol: String) {
-        val stockDto = StockDto(symbol, "1d", "1m") // Adjust period and interval as needed
-
-        // Make sure to call this within a coroutine scope using Dispatchers.IO
+        val stockDto = StockDto(symbol, "1d", "1m")
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                val stockData = stockService.getStockData(stockDto)
-                // Switch back to the Main dispatcher for UI operations
                 withContext(Dispatchers.Main) {
-                    // If successful, launch the IndividualStockActivity
                     val intent = Intent(this@DashboardActivity, IndividualStockActivity::class.java).apply {
                         putExtra("STOCK_TICKER", symbol)
                     }
                     startActivity(intent)
                 }
             } catch (e: Exception) {
-                // Log the error and inform the user
                 Log.e("DashboardActivity", "Error fetching stock data", e)
                 withContext(Dispatchers.Main) {
                     Toast.makeText(this@DashboardActivity, "Stock symbol not found or error occurred", Toast.LENGTH_LONG).show()
