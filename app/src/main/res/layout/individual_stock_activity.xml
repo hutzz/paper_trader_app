@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="6dp">
 
         <Button
             android:id="@+id/backButton"
@@ -66,7 +66,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="397dp"
+            android:layout_width="400dp"
             android:layout_height="65dp"
             android:orientation="horizontal"
             tools:layout_editor_absoluteX="7dp"
@@ -74,10 +74,10 @@
 
             <EditText
                 android:id="@+id/buyQuantity"
-                android:layout_width="wrap_content"
+                android:layout_width="224dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:ems="10"
+                android:ems="7"
                 android:hint="Quantity to buy"
                 android:inputType="numberDecimal" />
 
@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:ems="10"
+                android:ems="7"
                 android:hint="Quantity to sell"
                 android:inputType="numberDecimal" />
 
