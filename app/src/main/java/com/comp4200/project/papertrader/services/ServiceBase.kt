@@ -11,6 +11,7 @@ import java.io.IOException
 import com.google.gson.Gson
 import com.comp4200.project.papertrader.models.MessageModel
 import com.comp4200.project.papertrader.models.TokenModel
+import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -79,28 +80,32 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
         val responseBody = response.body ?: throw IOException("Response body is null")
         val responseBodyString = responseBody.string()
 
+        if (responseBodyString.isBlank()) {
+            throw IOException("Response body is empty")
+        }
+
         if (checkResponse(response)) {
             val message = getMessage(responseBodyString)
-            Log.i("info", message)
-
+            Log.i("info", message ?: "No message available")
             return gson.fromJson(responseBodyString, clazz)
         } else {
-            throw IOException(getMessage(responseBodyString))
-        }
+            throw IOException(getMessage(responseBodyString) ?: "Error message unavailable")        }
     }
     @Throws(IOException::class)
     private fun <T> handleResponse(response: Response, type: Type): T {
         val responseBody = response.body ?: throw IOException("Response body is null")
         val responseBodyString = responseBody.string()
 
+        if (responseBodyString.isBlank()) {
+            throw IOException("Response body is empty")
+        }
+
         if (checkResponse(response)) {
             val message = getMessage(responseBodyString)
-            Log.i("info", message)
-
+            Log.i("info", message ?: "No message available")
             return gson.fromJson(responseBodyString, type)
         } else {
-            throw IOException(getMessage(responseBodyString))
-        }
+            throw IOException(getMessage(responseBodyString) ?: "Error message unavailable")        }
     }
 
     private fun checkResponse(response: Response): Boolean {
@@ -111,8 +116,13 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
     }
     private fun getMessage(responseBodyString: String): String {
         return try {
-            val message = gson.fromJson(responseBodyString, MessageModel::class.java)
-            message.msg ?: "No message available"
+            val jsonElement = JsonParser.parseString(responseBodyString)
+            if (jsonElement.isJsonObject) {
+                val messageModel = gson.fromJson(jsonElement, MessageModel::class.java)
+                messageModel.msg
+            } else {
+                "Unexpected JSON structure. Expected an object."
+            }
         } catch (e: JsonSyntaxException) {
             Log.e("API Error", "Failed to parse message: ${e.message}")
             "Invalid message format"

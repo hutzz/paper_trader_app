@@ -1,12 +1,14 @@
 package com.comp4200.project.papertrader
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -45,6 +47,11 @@ class DashboardActivity : AppCompatActivity() {
 
         // Fetch and set actual data
         fetchUserDataAndStocks()
+
+        val logoutButton = findViewById<Button>(R.id.logoutButton)
+        logoutButton.setOnClickListener {
+            logoutUser()
+        }
     }
     private fun fetchUserDataAndStocks() {
         lifecycleScope.launch(Dispatchers.IO) {
@@ -113,6 +120,25 @@ class DashboardActivity : AppCompatActivity() {
         }
 
         override fun getItemCount() = stockList.size
+    }
+    private fun logoutUser() {
+        lifecycleScope.launch {
+            try {
+                // Correct instantiation of TokenService with OkHttpClient and Context
+                val tokenService = TokenService(OkHttpClient(), applicationContext)
+                tokenService.deleteTokens()  // Correctly called without parameters
+
+                // Navigate to Login Activity
+                val intent = Intent(this@DashboardActivity, LoginActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(intent)
+                finish()
+            } catch (e: Exception) {
+                Log.e("LogoutError", "Logout failed: ${e.message}")
+                // Optionally, show an error message to the user
+            }
+        }
     }
 }
 

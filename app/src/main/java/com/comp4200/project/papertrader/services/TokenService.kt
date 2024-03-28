@@ -31,8 +31,8 @@ class TokenService(client: OkHttpClient, private val context: Context) : Service
         val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
         return sharedPreferences.getString(refreshKey, null);
     }
-    suspend fun deleteTokens(token: TokenModel) {
-        val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE);
+    suspend fun deleteTokens() {
+        val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.remove(accessKey)
         editor.remove(refreshKey)
