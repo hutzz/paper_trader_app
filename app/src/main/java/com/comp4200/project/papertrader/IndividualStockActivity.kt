@@ -53,6 +53,8 @@ class IndividualStockActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.individual_stock_activity)
 
+        ticker = intent.getStringExtra("STOCK_TICKER") ?: ""
+
         quantityTextView = findViewById<TextView>(R.id.quantity)
         priceTextView = findViewById<TextView>(R.id.price)
         tickerTextView = findViewById<TextView>(R.id.stockTicker)

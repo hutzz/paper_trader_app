@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.comp4200.project.papertrader.models.StockDto
 import com.comp4200.project.papertrader.models.UserModel
 import com.comp4200.project.papertrader.services.TokenService
 import com.comp4200.project.papertrader.services.UserService
@@ -32,6 +34,9 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var adapter: StockAdapter
     private lateinit var usernameText: TextView
     private lateinit var balanceText: TextView
+    private lateinit var searchView: SearchView
+    private val stockService = StockService(OkHttpClient(), this@DashboardActivity)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +53,23 @@ class DashboardActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         fetchUserDataAndStocks()
+
+        searchView = findViewById(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    if (it.isNotEmpty()) {
+                        searchForStock(it)
+                    }
+                }
+                return true // Return true to indicate that the submission has been handled
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // Implement if you want to do anything while the user types each character
+                return false
+            }
+        })
 
         val logoutButton = findViewById<Button>(R.id.logoutButton)
         logoutButton.setOnClickListener {
@@ -69,7 +91,7 @@ class DashboardActivity : AppCompatActivity() {
                     balanceText.text = "$" + user.balance.toString()
                     val accessToken = tokenService.getAccessToken()
                     if (accessToken != null) {
-                        val stockService = StockService(client, this@DashboardActivity)
+                        //val stockService = StockService(client, this@DashboardActivity)
                         val userStocks = stockService.getUserStockList(accessToken)
                         withContext(Dispatchers.Main) {
                             adapter.updateData(userStocks)
@@ -150,6 +172,30 @@ class DashboardActivity : AppCompatActivity() {
                 finish()
             } catch (e: Exception) {
                 Log.e("LogoutError", "Logout failed: ${e.message}")
+            }
+        }
+    }
+    private fun searchForStock(symbol: String) {
+        val stockDto = StockDto(symbol, "1d", "1m") // Adjust period and interval as needed
+
+        // Make sure to call this within a coroutine scope using Dispatchers.IO
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val stockData = stockService.getStockData(stockDto)
+                // Switch back to the Main dispatcher for UI operations
+                withContext(Dispatchers.Main) {
+                    // If successful, launch the IndividualStockActivity
+                    val intent = Intent(this@DashboardActivity, IndividualStockActivity::class.java).apply {
+                        putExtra("STOCK_TICKER", symbol)
+                    }
+                    startActivity(intent)
+                }
+            } catch (e: Exception) {
+                // Log the error and inform the user
+                Log.e("DashboardActivity", "Error fetching stock data", e)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@DashboardActivity, "Stock symbol not found or error occurred", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
