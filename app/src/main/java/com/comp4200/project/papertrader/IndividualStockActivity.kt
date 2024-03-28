@@ -63,9 +63,9 @@ class IndividualStockActivity : AppCompatActivity() {
                 var userStockModel = findStockInList(fetchUserStockList(token), ticker)                             //API CALL
                 this@IndividualStockActivity.quantityOwned = userStockModel?.quantity ?: 0
                 quantityTextView.setText("Quantity owned: " + this@IndividualStockActivity.quantityOwned)
-                priceTextView.setText("Price per share: $" + stockData.close.first())
+                priceTextView.setText("Price per share: $" + String.format("%.2f", stockData.close.first()))
                 tickerTextView.setText(ticker)
-                totalValTextView.setText("Value owned: $" + quantityOwned * stockData.close.first())
+                totalValTextView.setText("Value owned: $" + String.format("%.2f", quantityOwned * stockData.close.first()))
 
                 backBtn.setOnClickListener {
                     lifecycleScope.launch {
