@@ -20,6 +20,7 @@ import com.comp4200.project.papertrader.services.UserService
 import com.comp4200.project.papertrader.services.StockService
 import com.comp4200.project.papertrader.models.UserStockModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -88,6 +89,7 @@ class DashboardActivity : AppCompatActivity() {
                         Log.e("DashboardError", "An unexpected error occurred: ", e)
                     }
                 }
+                delay(1000L)
                 retryCount++
             }
             if (!success) {
