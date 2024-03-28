@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.comp4200.project.papertrader.models.LoginModel
 import com.comp4200.project.papertrader.models.UserModel
 import com.comp4200.project.papertrader.services.TokenService
 import com.comp4200.project.papertrader.services.UserService
@@ -36,6 +35,8 @@ class DashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
+
+        supportActionBar?.hide()
 
         usernameText = findViewById<TextView>(R.id.username)
         balanceText = findViewById<TextView>(R.id.balance)
