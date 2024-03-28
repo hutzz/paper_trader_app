@@ -111,7 +111,7 @@ class IndividualStockActivity : AppCompatActivity() {
 
         var stock: UserStockModel? = null
         list.forEach { userStockModel ->
-            if(userStockModel.symbol.lowercase() === ticker.lowercase()){
+            if(userStockModel.symbol.lowercase() == ticker.lowercase()){
                 stock = userStockModel
                 return@forEach
             }
