@@ -1,6 +1,7 @@
 package com.comp4200.project.papertrader
 
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -110,6 +111,14 @@ class DashboardActivity : AppCompatActivity() {
             holder.textViewSymbol.text = stock.symbol
             holder.textViewPrice.text = String.format("$%.2f", stock.price)
             holder.textViewQuantity.text = stock.quantity.toString()
+
+            holder.itemView.setOnClickListener{
+                val intent = Intent(holder.itemView.context, IndividualStockActivity::class.java)
+                intent.putExtra("STOCK_TICKER", stock.symbol)
+                startActivity(intent)
+                finish()
+            }
+
         }
 
         override fun getItemCount() = stockList.size
