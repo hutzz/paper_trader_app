@@ -57,7 +57,7 @@ class DashboardActivity : AppCompatActivity() {
     private fun fetchUserDataAndStocks() {
         lifecycleScope.launch(Dispatchers.IO) {
             var retryCount = 0
-            val maxRetries = 3
+            val maxRetries = 10
             var success = false
             while (!success && retryCount < maxRetries) {
                 try {
