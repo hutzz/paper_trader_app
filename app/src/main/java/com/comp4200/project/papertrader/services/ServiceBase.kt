@@ -56,7 +56,6 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
         val response = client.newCall(request).execute()
         return handleResponse(response, type)
     }
-    // Inside your ServiceBase class
     @Throws(IOException::class)
     suspend fun <T> postJson(url: String, body: Any, clazz: Class<T>, token: String? = null,): T {
         checkTokenExpiration(token)
