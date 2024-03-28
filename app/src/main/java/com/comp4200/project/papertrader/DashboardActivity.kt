@@ -66,7 +66,7 @@ class DashboardActivity : AppCompatActivity() {
                     val tokenService = TokenService(client, this@DashboardActivity)
                     val user = getUserData(userService, tokenService)
                     usernameText.text = user.username
-                    balanceText.text = user.balance.toString()
+                    balanceText.text = "$" + user.balance.toString()
                     val accessToken = tokenService.getAccessToken()
                     if (accessToken != null) {
                         val stockService = StockService(client, this@DashboardActivity)
