@@ -11,6 +11,7 @@ import java.io.IOException
 import com.google.gson.Gson
 import com.comp4200.project.papertrader.models.MessageModel
 import com.comp4200.project.papertrader.models.TokenModel
+import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
@@ -109,8 +110,13 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
         return false
     }
     private fun getMessage(responseBodyString: String): String {
-        val message = gson.fromJson(responseBodyString, MessageModel::class.java)
-        return message?.msg ?: "No message available"
+        return try {
+            val message = gson.fromJson(responseBodyString, MessageModel::class.java)
+            message.msg ?: "No message available"
+        } catch (e: JsonSyntaxException) {
+            Log.e("API Error", "Failed to parse message: ${e.message}")
+            "Invalid message format"
+        }
     }
     private suspend fun isExpired(token: String): Boolean {
         val url = createUrl("/expiry")
