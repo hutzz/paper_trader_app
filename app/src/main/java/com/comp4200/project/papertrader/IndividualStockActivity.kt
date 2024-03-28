@@ -114,25 +114,37 @@ class IndividualStockActivity : AppCompatActivity() {
 
         buyBtn.setOnClickListener {
             lifecycleScope.launch {
-                val quant = buyQuantity.text.toString().toInt()
-                val buyDto = BuySellDto(ticker, quant)
-                val resp = buyStock(token, buyDto)
-                if (resp.contains("Successfully purchased")) {
-                    updateUI(quant, stockData.close.first())
+                try {
+                    val quant = buyQuantity.text.toString().toInt()
+                    val buyDto = BuySellDto(ticker, quant)
+                    val resp = buyStock(token, buyDto)
+                    if (resp.contains("Successfully purchased")) {
+                        updateUI(quant, stockData.close.first())
+                    }
+                    Toast.makeText(this@IndividualStockActivity, resp, Toast.LENGTH_LONG).show()
                 }
-                Toast.makeText(this@IndividualStockActivity, resp, Toast.LENGTH_LONG).show()
+                catch (e: Exception) {
+                    Log.e("buyerror", e.message.toString())
+                    Toast.makeText(this@IndividualStockActivity, "Invalid input", Toast.LENGTH_LONG).show()
+                }
             }
         }
 
         sellBtn.setOnClickListener {
             lifecycleScope.launch {
-                val quant = sellQuantity.text.toString().toInt()
-                val sellDto = BuySellDto(ticker, quant)
-                val resp = sellStock(token, sellDto)
-                if (resp.contains("Successfully sold")) {
-                    updateUI(-quant, stockData.close.first())
+                try {
+                    val quant = sellQuantity.text.toString().toInt()
+                    val sellDto = BuySellDto(ticker, quant)
+                    val resp = sellStock(token, sellDto)
+                    if (resp.contains("Successfully sold")) {
+                        updateUI(-quant, stockData.close.first())
+                    }
+                    Toast.makeText(this@IndividualStockActivity, resp, Toast.LENGTH_LONG).show()
                 }
-                Toast.makeText(this@IndividualStockActivity, resp, Toast.LENGTH_LONG).show()
+                catch (e: Exception) {
+                    Log.e("sellerror", e.message.toString())
+                    Toast.makeText(this@IndividualStockActivity, "Invalid input", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
