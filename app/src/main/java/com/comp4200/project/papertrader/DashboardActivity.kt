@@ -100,6 +100,7 @@ class DashboardActivity : AppCompatActivity() {
                     withContext(Dispatchers.Main) {
                         if (e.message == "User has no stocks!") {
                             Toast.makeText(this@DashboardActivity, "You currently have no stocks.", Toast.LENGTH_LONG).show()
+                            retryCount = 10
                         } else {
                             Log.e("DashboardError", "Failed to get user stocks: ", e)
                         }

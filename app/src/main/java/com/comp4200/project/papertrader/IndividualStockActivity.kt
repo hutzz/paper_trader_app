@@ -88,7 +88,7 @@ class IndividualStockActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun fetchDataAndStocks() {
+    /*private suspend fun fetchDataAndStocks() {
         ticker = intent.getStringExtra("STOCK_TICKER") ?: ""
         token = tokenService.getAccessToken() ?: throw IllegalStateException("Access token is null")
         dto = StockDto(ticker, "1d", "1d")
@@ -99,6 +99,34 @@ class IndividualStockActivity : AppCompatActivity() {
         priceTextView.text = "Price per share: $${String.format("%.2f", stockData.close.first())}"
         tickerTextView.text = ticker
         totalValTextView.text = "Value owned: $${String.format("%.2f", (quantityOwned * stockData.close.first()))}"
+        setupButtons()
+    }*/
+    private suspend fun fetchDataAndStocks() {
+        ticker = intent.getStringExtra("STOCK_TICKER") ?: ""
+        token = tokenService.getAccessToken() ?: throw IllegalStateException("Access token is null")
+        dto = StockDto(ticker, "1d", "1d")
+
+        // Fetch specific stock data
+        stockData = fetchStockData(dto)
+
+        // Update the UI with stock data
+        priceTextView.text = "Price per share: $${String.format("%.2f", stockData.close.first())}"
+        tickerTextView.text = ticker
+
+        // Attempt to fetch the user's stock ownership information
+        try {
+            val userStockModel = findStockInList(fetchUserStockList(token), ticker)
+            quantityOwned = userStockModel?.quantity ?: 0
+            // Update the UI with user's stock ownership information
+            quantityTextView.text = "Quantity owned: $quantityOwned"
+            totalValTextView.text = "Value owned: $${String.format("%.2f", (quantityOwned * stockData.close.first()))}"
+        } catch (e: Exception) {
+            Log.e("IndividualStockActivity", "User may not own this stock or error occurred: $e")
+            // Handle case where user does not own the stock or another error occurred
+            // You might want to display default or placeholder values or a specific message
+            quantityTextView.text = "Quantity owned: 0"
+            totalValTextView.text = "Value owned: $0.00"
+        }
         setupButtons()
     }
 
