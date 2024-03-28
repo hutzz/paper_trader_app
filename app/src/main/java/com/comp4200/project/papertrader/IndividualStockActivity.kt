@@ -25,21 +25,31 @@ class IndividualStockActivity : AppCompatActivity() {
     private lateinit var token: String
     private lateinit var dto: StockDto
     private val stockService = StockService(OkHttpClient(), this@IndividualStockActivity)
-    private var quantityTextView = findViewById<TextView>(R.id.quantity)
-    private var priceTextView = findViewById<TextView>(R.id.price)
-    private var tickerTextView = findViewById<TextView>(R.id.stockTicker)
-    private var totalValTextView = findViewById<TextView>(R.id.totalValue)
-    private var backBtn = findViewById<Button>(R.id.backButton)
-    private var buyBtn = findViewById<Button>(R.id.buyButton)
-    private var sellBtn = findViewById<Button>(R.id.sellButton)
-    private var sellQuantity = findViewById<EditText>(R.id.sellQuantity)
-    private var buyQuantity = findViewById<EditText>(R.id.buyQuantity)
+    private lateinit var quantityTextView: TextView
+    private lateinit var priceTextView: TextView
+    private lateinit var tickerTextView: TextView
+    private lateinit var totalValTextView: TextView
+    private lateinit var backBtn: Button
+    private lateinit var buyBtn: Button
+    private lateinit var sellBtn: Button
+    private lateinit var sellQuantity: EditText
+    private lateinit var buyQuantity: EditText
     private lateinit var stockData: StockModel
     private var quantityOwned = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.individual_stock_activity)
+
+        quantityTextView = findViewById<TextView>(R.id.quantity)
+        priceTextView = findViewById<TextView>(R.id.price)
+        tickerTextView = findViewById<TextView>(R.id.stockTicker)
+        totalValTextView = findViewById<TextView>(R.id.totalValue)
+        backBtn = findViewById<Button>(R.id.backButton)
+        buyBtn = findViewById<Button>(R.id.buyButton)
+        sellBtn = findViewById<Button>(R.id.sellButton)
+        sellQuantity = findViewById<EditText>(R.id.sellQuantity)
+        buyQuantity = findViewById<EditText>(R.id.buyQuantity)
 
         lifecycleScope.launch{
 
