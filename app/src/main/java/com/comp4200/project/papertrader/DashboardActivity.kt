@@ -46,7 +46,6 @@ class DashboardActivity : AppCompatActivity() {
         adapter = StockAdapter(emptyList())
         recyclerView.adapter = adapter
 
-        // Fetch and set actual data
         fetchUserDataAndStocks()
 
         val logoutButton = findViewById<Button>(R.id.logoutButton)
@@ -140,11 +139,8 @@ class DashboardActivity : AppCompatActivity() {
     private fun logoutUser() {
         lifecycleScope.launch {
             try {
-                // Correct instantiation of TokenService with OkHttpClient and Context
                 val tokenService = TokenService(OkHttpClient(), applicationContext)
                 tokenService.deleteTokens()  // Correctly called without parameters
-
-                // Navigate to Login Activity
                 val intent = Intent(this@DashboardActivity, LoginActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 }
@@ -152,7 +148,6 @@ class DashboardActivity : AppCompatActivity() {
                 finish()
             } catch (e: Exception) {
                 Log.e("LogoutError", "Logout failed: ${e.message}")
-                // Optionally, show an error message to the user
             }
         }
     }
