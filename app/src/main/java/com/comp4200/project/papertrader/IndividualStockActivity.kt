@@ -61,7 +61,6 @@ class IndividualStockActivity : AppCompatActivity() {
                 this@IndividualStockActivity.dto = StockDto(ticker, "1d", "1d")
                 this@IndividualStockActivity.stockData = fetchStockData(dto)                                        //API CALL
                 var userStockModel = findStockInList(fetchUserStockList(token), ticker)                             //API CALL
-                Toast.makeText(this@IndividualStockActivity, "QUANTITY=" + userStockModel?.quantity, Toast.LENGTH_LONG).show()
                 this@IndividualStockActivity.quantityOwned = userStockModel?.quantity ?: 0
                 quantityTextView.setText("Quantity owned: " + this@IndividualStockActivity.quantityOwned)
                 priceTextView.setText("Price per share: $" + stockData.close.first())
@@ -107,6 +106,9 @@ class IndividualStockActivity : AppCompatActivity() {
     }
 
     private fun findStockInList(list: List<UserStockModel>, ticker: String): UserStockModel?{
+        Log.i("TICKER VALUE:", ticker)
+        Log.i("STOCK LIST", list.toString())
+
         var stock: UserStockModel? = null
         list.forEach { userStockModel ->
             if(userStockModel.symbol === ticker){
