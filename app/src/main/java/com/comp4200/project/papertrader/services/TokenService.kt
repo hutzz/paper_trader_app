@@ -60,7 +60,7 @@ class TokenService(client: OkHttpClient, private val context: Context) : Service
         val url = createUrl("/expiry")
         val requestBody = mapOf("token" to token)
         val responseBody = postJson(url, requestBody, Map::class.java)
-        val jsonObject = JSONObject(responseBody) // Assuming you have imported org.json.JSONObject
+        val jsonObject = JSONObject(responseBody)
         val timestamp = jsonObject.optDouble("expiry_time")
         if (timestamp.isNaN()) {
             throw IOException("Invalid response format: expiry_time not found")
