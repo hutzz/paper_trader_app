@@ -26,13 +26,15 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
     private val gson = Gson()
 
     fun createUrl(route: String): String {
-        val baseUrl = "http://172.22.162.214:5000"
+        val baseUrl = "http://10.147.17.101:5000"
         return baseUrl + route
     }
     @Throws(IOException::class)
     suspend fun <T> getJson(url: String, clazz: Class<T>, token: String? = null,): T {
         checkTokenExpiration(token)
-        val request = requestBuilder(url, token).build()
+        val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val newToken = sharedPreferences.getString("token", null);
+        val request = requestBuilder(url, newToken).build()
         val response = client.newCall(request).execute()
         return handleResponse(response, clazz)
     }
@@ -48,7 +50,9 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
     }
     suspend fun <T> getJson(url: String, type: Type, token: String? = null): T {
         checkTokenExpiration(token)
-        val request = requestBuilder(url, token).build()
+        val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val newToken = sharedPreferences.getString("token", null);
+        val request = requestBuilder(url, newToken).build()
         val response = client.newCall(request).execute()
         return handleResponse(response, type)
     }
@@ -56,9 +60,11 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
     @Throws(IOException::class)
     suspend fun <T> postJson(url: String, body: Any, clazz: Class<T>, token: String? = null,): T {
         checkTokenExpiration(token)
+        val sharedPreferences = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
+        val newToken = sharedPreferences.getString("token", null);
         val json = gson.toJson(body)
         val requestBody = json.toRequestBody("application/json".toMediaType())
-        val request = requestBuilder(url, token).post(requestBody).build()
+        val request = requestBuilder(url, newToken).post(requestBody).build()
         val response = client.newCall(request).execute()
         return handleResponse(response, clazz)
     }
