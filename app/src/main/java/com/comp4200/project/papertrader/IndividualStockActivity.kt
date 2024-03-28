@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.io.IOException
+import java.net.ProtocolException
 
 class IndividualStockActivity : AppCompatActivity() {
 
@@ -76,6 +77,7 @@ class IndividualStockActivity : AppCompatActivity() {
         while (!success && retryCount < MAX_RETRIES) {
             try {
                 fetchDataAndStocks()
+                Log.i("IndividualStockActivity", "RETRY COUNT: $retryCount")
                 success = true
             } catch (e: Exception) {
                 Log.e("IndividualStockActivity", "Failed to fetch data and stocks: $e")
@@ -106,24 +108,30 @@ class IndividualStockActivity : AppCompatActivity() {
         token = tokenService.getAccessToken() ?: throw IllegalStateException("Access token is null")
         dto = StockDto(ticker, "1d", "1d")
 
-        // Fetch specific stock data
         stockData = fetchStockData(dto)
 
-        // Update the UI with stock data
         priceTextView.text = "Price per share: $${String.format("%.2f", stockData.close.first())}"
         tickerTextView.text = ticker
 
-        // Attempt to fetch the user's stock ownership information
         try {
             val userStockModel = findStockInList(fetchUserStockList(token), ticker)
             quantityOwned = userStockModel?.quantity ?: 0
-            // Update the UI with user's stock ownership information
             quantityTextView.text = "Quantity owned: $quantityOwned"
             totalValTextView.text = "Value owned: $${String.format("%.2f", (quantityOwned * stockData.close.first()))}"
-        } catch (e: Exception) {
+
+        }
+        catch (e: ProtocolException) {
+            lifecycleScope.launch {
+                retryFetchUserDataAndStocks()
+            }
+        }
+        catch (e: IOException) {
+            lifecycleScope.launch {
+                retryFetchUserDataAndStocks()
+            }
+        }
+        catch (e: Exception) {
             Log.e("IndividualStockActivity", "User may not own this stock or error occurred: $e")
-            // Handle case where user does not own the stock or another error occurred
-            // You might want to display default or placeholder values or a specific message
             quantityTextView.text = "Quantity owned: 0"
             totalValTextView.text = "Value owned: $0.00"
         }
@@ -133,9 +141,9 @@ class IndividualStockActivity : AppCompatActivity() {
     private fun setupButtons() {
         backBtn.setOnClickListener {
             lifecycleScope.launch {
-                withContext(Dispatchers.IO) {
-                    tokenService.checkTokenExpiration(tokenService.getAccessToken())
-                }
+//                withContext(Dispatchers.IO) {
+//                    tokenService.checkTokenExpiration(tokenService.getAccessToken())
+//                }
                 val intent = Intent(this@IndividualStockActivity, DashboardActivity::class.java)
                 startActivity(intent)
                 finish()
