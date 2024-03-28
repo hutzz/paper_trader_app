@@ -30,9 +30,16 @@
         android:id="@+id/textViewBalance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Your current account balance is: $XXX"
+        android:text="Your current account balance is:"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:layout_marginTop="8dp"/>
+
+    <TextView
+        android:id="@+id/balance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        />
 
     <TextView
         android:layout_width="wrap_content"

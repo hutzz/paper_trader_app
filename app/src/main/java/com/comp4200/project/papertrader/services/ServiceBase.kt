@@ -24,7 +24,7 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
     private val gson = Gson()
 
     fun createUrl(route: String): String {
-        val baseUrl = "http://10.147.17.101:5000"
+        val baseUrl = "http://172.22.162.214:5000"
         return baseUrl + route
     }
     @Throws(IOException::class)
@@ -50,6 +50,7 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
         val response = client.newCall(request).execute()
         return handleResponse(response, type)
     }
+    // Inside your ServiceBase class
     @Throws(IOException::class)
     suspend fun <T> postJson(url: String, body: Any, clazz: Class<T>, token: String? = null,): T {
         checkTokenExpiration(token)
