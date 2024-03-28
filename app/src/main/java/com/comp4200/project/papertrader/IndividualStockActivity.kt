@@ -67,10 +67,16 @@ class IndividualStockActivity : AppCompatActivity() {
                 tickerTextView.setText(ticker)
                 totalValTextView.setText("Value owned: $" + quantityOwned * stockData.close.first())
 
-                backBtn.setOnClickListener{
-                    val intent = Intent(this@IndividualStockActivity, DashboardActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                backBtn.setOnClickListener {
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            Log.i("individual", "here")
+                            tokenService.checkTokenExpiration(tokenService.getAccessToken())
+                        }
+                        val intent = Intent(this@IndividualStockActivity, DashboardActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
                 }
 
                 buyBtn.setOnClickListener{
