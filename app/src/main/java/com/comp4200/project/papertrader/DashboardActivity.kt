@@ -55,36 +55,43 @@ class DashboardActivity : AppCompatActivity() {
     }
     private fun fetchUserDataAndStocks() {
         lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val client = OkHttpClient()
-                val userService = UserService(client, this@DashboardActivity)
-                val tokenService = TokenService(client, this@DashboardActivity)
-                val user = getUserData(userService, tokenService)
-                usernameText.text = user.username
-                balanceText.text = user.balance.toString()
-                val accessToken = tokenService.getAccessToken()
-                if (accessToken != null) {
-                    val stockService = StockService(client, this@DashboardActivity)
-                    val userStocks = stockService.getUserStockList(accessToken)
+            var retryCount = 0
+            val maxRetries = 3
+            var success = false
+            while (!success && retryCount < maxRetries) {
+                try {
+                    val client = OkHttpClient()
+                    val userService = UserService(client, this@DashboardActivity)
+                    val tokenService = TokenService(client, this@DashboardActivity)
+                    val user = getUserData(userService, tokenService)
+                    usernameText.text = user.username
+                    balanceText.text = user.balance.toString()
+                    val accessToken = tokenService.getAccessToken()
+                    if (accessToken != null) {
+                        val stockService = StockService(client, this@DashboardActivity)
+                        val userStocks = stockService.getUserStockList(accessToken)
+                        withContext(Dispatchers.Main) {
+                            adapter.updateData(userStocks)
+                        }
+                        success = true
+                    }
+                } catch (e: IOException) {
                     withContext(Dispatchers.Main) {
-                        adapter.updateData(userStocks)
+                        if (e.message == "User has no stocks!") {
+                            Toast.makeText(this@DashboardActivity, "You currently have no stocks.", Toast.LENGTH_LONG).show()
+                        } else {
+                            Log.e("DashboardError", "Failed to get user stocks: ", e)
+                        }
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Log.e("DashboardError", "An unexpected error occurred: ", e)
                     }
                 }
-            } catch (e: IOException) {
-                withContext(Dispatchers.Main) {
-                    if (e.message == "User has no stocks!") {
-                        // Update the UI to inform the user that they have no stocks
-                        Toast.makeText(this@DashboardActivity, "You currently have no stocks.", Toast.LENGTH_LONG).show()
-                    } else {
-                        // Handle other IOExceptions differently
-                        Log.e("DashboardError", "Failed to get user stocks: ", e)
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    // Handle other types of exceptions
-                    Log.e("DashboardError", "An unexpected error occurred: ", e)
-                }
+                retryCount++
+            }
+            if (!success) {
+                Log.e("DashboardError", "Failed to fetch user data and stocks after $maxRetries attempts")
             }
         }
     }
