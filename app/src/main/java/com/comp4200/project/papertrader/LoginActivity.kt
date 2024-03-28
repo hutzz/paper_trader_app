@@ -60,7 +60,6 @@ class LoginActivity : AppCompatActivity() {
             tokenService.storeTokens(tokenModel)
         }
 
-        // Navigate to the DashboardActivity
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
         finish()
