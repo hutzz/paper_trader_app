@@ -17,7 +17,6 @@ class StockService(client: OkHttpClient, private val context: Context) : Service
     }
     suspend fun getUserStockList(token: String): List<UserStockModel> {
         val url = createUrl("/stock/get")
-        // Explicitly specifying the type as a list of UserStockModel
         val type = object : TypeToken<List<UserStockModel>>() {}.type
         return getJson(url, type, token)
     }
