@@ -15,7 +15,9 @@ import com.comp4200.project.papertrader.models.StockModel
 import com.comp4200.project.papertrader.models.UserStockModel
 import com.comp4200.project.papertrader.services.StockService
 import com.comp4200.project.papertrader.services.TokenService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 
 class IndividualStockActivity : AppCompatActivity() {
@@ -56,9 +58,9 @@ class IndividualStockActivity : AppCompatActivity() {
             try{
                 ticker = intent.getStringExtra("STOCK_TICKER") ?: ""
                 this@IndividualStockActivity.token = tokenService.getAccessToken() ?: throw IllegalStateException("Access token is null")
-                this@IndividualStockActivity.dto = StockDto(ticker, "1d", "1d")                 //finish later. Use close price
-                this@IndividualStockActivity.stockData = stockService.getStockData(dto)
-                var userStockModel = findStockInList(stockService.getUserStockList(token), ticker)
+                this@IndividualStockActivity.dto = StockDto(ticker, "1d", "1d")
+                this@IndividualStockActivity.stockData = fetchStockData(dto)                                        //API CALL
+                var userStockModel = findStockInList(fetchUserStockList(token), ticker)                             //API CALL
                 this@IndividualStockActivity.quantityOwned = userStockModel?.quantity ?: 0
                 quantityTextView.setText("Quantity owned: " + this@IndividualStockActivity.quantityOwned)
                 priceTextView.setText("Price per share: $" + stockData.close.first())
@@ -73,9 +75,9 @@ class IndividualStockActivity : AppCompatActivity() {
 
                 buyBtn.setOnClickListener{
                     lifecycleScope.launch {
-                        var quant = buyQuantity.text.toString().toInt()
-                        var buyDto = BuySellDto(ticker, quant)
-                        val resp = stockService.BuyStock(token, buyDto).msg
+                        val quant = buyQuantity.text.toString().toInt()
+                        val buyDto = BuySellDto(ticker, quant)
+                        val resp = buyStock(token, buyDto)
                         if(resp.contains("Successfully purchased")){
                             updateUI(quant, stockData.close.first())
                         }
@@ -86,9 +88,9 @@ class IndividualStockActivity : AppCompatActivity() {
 
                 sellBtn.setOnClickListener{
                     lifecycleScope.launch {
-                        var quant = sellQuantity.text.toString().toInt()
-                        var sellDto = BuySellDto(ticker, quant)
-                        val resp = stockService.SellStock(token, sellDto).msg
+                        val quant = sellQuantity.text.toString().toInt()
+                        val sellDto = BuySellDto(ticker, quant)
+                        val resp = sellStock(token, sellDto)
                         if(resp.contains("Successfully sold")){
                             updateUI(quant, stockData.close.first())
                         }
@@ -123,5 +125,29 @@ class IndividualStockActivity : AppCompatActivity() {
 
         quantityTextView.setText("Quantity owned: " + this@IndividualStockActivity.quantityOwned)
         totalValTextView.setText("Value owned: $" + this@IndividualStockActivity.quantityOwned * price)
+    }
+
+    private suspend fun fetchStockData(dto: StockDto): StockModel{
+        return withContext(Dispatchers.IO) {
+            stockService.getStockData(dto)
+        }
+    }
+
+    private suspend fun fetchUserStockList(token: String): List<UserStockModel>{
+        return withContext(Dispatchers.IO){
+            stockService.getUserStockList(token)
+        }
+    }
+
+    private suspend fun buyStock(token: String, buyDto: BuySellDto): String{
+        return withContext(Dispatchers.IO){
+            stockService.BuyStock(token, buyDto).msg
+        }
+    }
+
+    private suspend fun sellStock(token: String, sellDto: BuySellDto): String{
+        return withContext(Dispatchers.IO){
+            stockService.SellStock(token, sellDto).msg
+        }
     }
 }
