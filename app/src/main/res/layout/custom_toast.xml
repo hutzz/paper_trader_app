@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/custom_toast_container"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@android:drawable/toast_frame" ><!-- Use Android's default toast background -->>
+
+    <ImageView
+        android:id="@+id/toast_icon"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:src="@drawable/pt_l_c"
+        android:scaleType="fitCenter"
+        android:layout_marginEnd="8dp"/>/> <!-- Replace with your logo drawable -->
+
+    <TextView
+        android:id="@+id/toast_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="17sp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:text="Your text here" />
+</LinearLayout>

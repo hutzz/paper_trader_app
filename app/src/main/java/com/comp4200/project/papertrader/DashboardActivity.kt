@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,7 +88,7 @@ class DashboardActivity : AppCompatActivity() {
                     val tokenService = TokenService(client, this@DashboardActivity)
                     val user = getUserData(userService, tokenService)
                     usernameText.text = user.username
-                    balanceText.text = "$" + user.balance.toString()
+                    balanceText.text = String.format("$%.2f", user.balance)
                     val accessToken = tokenService.getAccessToken()
                     if (accessToken != null) {
                         val userStocks = stockService.getUserStockList(accessToken)
@@ -99,7 +100,8 @@ class DashboardActivity : AppCompatActivity() {
                 } catch (e: IOException) {
                     withContext(Dispatchers.Main) {
                         if (e.message == "User has no stocks!") {
-                            Toast.makeText(this@DashboardActivity, "You currently have no stocks.", Toast.LENGTH_LONG).show()
+                            //Toast.makeText(this@DashboardActivity, "You currently have no stocks.", Toast.LENGTH_LONG).show()
+                            showCustomToast(this@DashboardActivity, "You currently have no stocks.")
                             retryCount = 10
                         } else {
                             Log.e("DashboardError", "Failed to get user stocks: ", e)
@@ -190,6 +192,19 @@ class DashboardActivity : AppCompatActivity() {
                     Toast.makeText(this@DashboardActivity, "Stock symbol not found or error occurred", Toast.LENGTH_LONG).show()
                 }
             }
+        }
+    }
+    private fun showCustomToast(context: Context, message: String) {
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.custom_toast, null)
+
+        val text = layout.findViewById<TextView>(R.id.toast_text)
+        text.text = message
+
+        Toast(context).apply {
+            duration = Toast.LENGTH_LONG
+            view = layout
+            show()
         }
     }
 }
