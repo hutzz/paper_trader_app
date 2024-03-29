@@ -2,5 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="dark_blue">#000080</color>
     <color name="login_background">#E0E0E0</color>
 </resources>
