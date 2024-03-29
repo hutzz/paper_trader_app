@@ -1,10 +1,13 @@
 package com.comp4200.project.papertrader
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -41,7 +44,7 @@ class LoginActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
                         Log.e("LoginError", "Login failed: ", e)
-                        Toast.makeText(this@LoginActivity, "Login failed. Invalid username and password combination.", Toast.LENGTH_LONG).show()
+                        showCustomToast(this@LoginActivity, "Login failed. Invalid username and password combination.")
                     }
                 }
             }
@@ -63,5 +66,18 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, DashboardActivity::class.java)
         startActivity(intent)
         finish()
+    }
+    private fun showCustomToast(context: Context, message: String) {
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.custom_toast, null)
+
+        val text = layout.findViewById<TextView>(R.id.toast_text)
+        text.text = message
+
+        Toast(context).apply {
+            duration = Toast.LENGTH_LONG
+            view = layout
+            show()
+        }
     }
 }

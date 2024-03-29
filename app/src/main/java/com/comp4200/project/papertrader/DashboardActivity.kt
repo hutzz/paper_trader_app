@@ -100,7 +100,6 @@ class DashboardActivity : AppCompatActivity() {
                 } catch (e: IOException) {
                     withContext(Dispatchers.Main) {
                         if (e.message == "User has no stocks!") {
-                            //Toast.makeText(this@DashboardActivity, "You currently have no stocks.", Toast.LENGTH_LONG).show()
                             showCustomToast(this@DashboardActivity, "You currently have no stocks.")
                             retryCount = 10
                         } else {
@@ -180,16 +179,21 @@ class DashboardActivity : AppCompatActivity() {
         val stockDto = StockDto(symbol, "1d", "1m")
         lifecycleScope.launch(Dispatchers.IO) {
             try {
+                // Attempt to fetch the stock data here. This is a critical operation that might fail.
+                val stockData = stockService.getStockData(stockDto) // Make sure this call is correctly implemented in your service.
+
+                // If the above call was successful, proceed to launch IndividualStockActivity.
                 withContext(Dispatchers.Main) {
                     val intent = Intent(this@DashboardActivity, IndividualStockActivity::class.java).apply {
                         putExtra("STOCK_TICKER", symbol)
+                        // You can also pass additional data to IndividualStockActivity as needed.
                     }
                     startActivity(intent)
                 }
             } catch (e: Exception) {
                 Log.e("DashboardActivity", "Error fetching stock data", e)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(this@DashboardActivity, "Stock symbol not found or error occurred", Toast.LENGTH_LONG).show()
+                    showCustomToast(this@DashboardActivity, "Stock symbol not found or error occurred")
                 }
             }
         }

@@ -26,7 +26,7 @@ open class ServiceBase (private val client: OkHttpClient, private val context: C
     private val gson = Gson()
 
     fun createUrl(route: String): String {
-        val baseUrl = "http://172.22.162.214:5000"
+        val baseUrl = "http://10.171.62.197:5000"
         return baseUrl + route
     }
     @Throws(IOException::class)

@@ -89,20 +89,6 @@ class IndividualStockActivity : AppCompatActivity() {
             Log.e("IndividualStockActivity", "Failed to fetch data and stocks after $MAX_RETRIES attempts")
         }
     }
-
-    /*private suspend fun fetchDataAndStocks() {
-        ticker = intent.getStringExtra("STOCK_TICKER") ?: ""
-        token = tokenService.getAccessToken() ?: throw IllegalStateException("Access token is null")
-        dto = StockDto(ticker, "1d", "1d")
-        stockData = fetchStockData(dto)
-        val userStockModel = findStockInList(fetchUserStockList(token), ticker)
-        quantityOwned = userStockModel?.quantity ?: 0
-        quantityTextView.text = "Quantity owned: $quantityOwned"
-        priceTextView.text = "Price per share: $${String.format("%.2f", stockData.close.first())}"
-        tickerTextView.text = ticker
-        totalValTextView.text = "Value owned: $${String.format("%.2f", (quantityOwned * stockData.close.first()))}"
-        setupButtons()
-    }*/
     private suspend fun fetchDataAndStocks() {
         ticker = intent.getStringExtra("STOCK_TICKER") ?: ""
         token = tokenService.getAccessToken() ?: throw IllegalStateException("Access token is null")
@@ -159,11 +145,11 @@ class IndividualStockActivity : AppCompatActivity() {
                     if (resp.contains("Successfully purchased")) {
                         updateUI(quant, stockData.close.first())
                     }
-                    Toast.makeText(this@IndividualStockActivity, resp, Toast.LENGTH_LONG).show()
+                    showCustomToast(this@IndividualStockActivity, resp)
                 }
                 catch (e: Exception) {
                     Log.e("buyerror", e.message.toString())
-                    Toast.makeText(this@IndividualStockActivity, "Invalid input", Toast.LENGTH_LONG).show()
+                    showCustomToast(this@IndividualStockActivity, "Invalid input")
                 }
             }
         }
@@ -177,11 +163,11 @@ class IndividualStockActivity : AppCompatActivity() {
                     if (resp.contains("Successfully sold")) {
                         updateUI(-quant, stockData.close.first())
                     }
-                    Toast.makeText(this@IndividualStockActivity, resp, Toast.LENGTH_LONG).show()
+                    showCustomToast(this@IndividualStockActivity, resp)
                 }
                 catch (e: Exception) {
                     Log.e("sellerror", e.message.toString())
-                    Toast.makeText(this@IndividualStockActivity, "Invalid input", Toast.LENGTH_LONG).show()
+                    showCustomToast(this@IndividualStockActivity, "Invalid input")
                 }
             }
         }
@@ -218,6 +204,19 @@ class IndividualStockActivity : AppCompatActivity() {
     private suspend fun sellStock(token: String, sellDto: BuySellDto): String {
         return withContext(Dispatchers.IO) {
             stockService.SellStock(token, sellDto).msg
+        }
+    }
+    private fun showCustomToast(context: Context, message: String) {
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.custom_toast, null)
+
+        val text = layout.findViewById<TextView>(R.id.toast_text)
+        text.text = message
+
+        Toast(context).apply {
+            duration = Toast.LENGTH_LONG
+            view = layout
+            show()
         }
     }
 }

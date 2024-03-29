@@ -3,13 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/login_background"
+    tools:context=".IndividualStockActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+    >
 
         <Button
             android:id="@+id/backButton"
@@ -17,22 +20,25 @@
             android:layout_height="wrap_content"
             android:text="Back"
             tools:layout_editor_absoluteX="4dp"
-            tools:layout_editor_absoluteY="7dp" />
+            tools:layout_editor_absoluteY="7dp"
+            android:backgroundTint="#2196F3"/>
+        />
 
         <TextView
             android:id="@+id/stockTicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="32dp"
             android:layout_marginBottom="16dp"
+            android:text="TextView"
+            android:textSize="60sp"
             tools:layout_editor_absoluteX="176dp"
             tools:layout_editor_absoluteY="154dp" />
 
         <LinearLayout
-            android:layout_width="397dp"
-            android:layout_height="85dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
             android:layout_marginBottom="152dp"
             android:orientation="vertical"
@@ -43,31 +49,34 @@
                 android:id="@+id/quantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginBottom="12dp"
-                android:text="TextView" />
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginBottom="12dp"
-                android:text="TextView" />
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/totalValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:layout_marginBottom="12dp"
-                android:text="TextView" />
+                android:layout_weight="1"
+                android:text="TextView"
+                android:textSize="20sp" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="400dp"
-            android:layout_height="65dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             tools:layout_editor_absoluteX="7dp"
             tools:layout_editor_absoluteY="458dp">
@@ -85,12 +94,13 @@
                 android:id="@+id/buyButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Buy" />
+                android:text="Buy"
+                android:backgroundTint="#2196F3"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="397dp"
-            android:layout_height="65dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             tools:layout_editor_absoluteX="8dp"
             tools:layout_editor_absoluteY="537dp">
@@ -108,7 +118,8 @@
                 android:id="@+id/sellButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sell" />
+                android:text="Sell"
+                android:backgroundTint="#2196F3"/>
         </LinearLayout>
 
     </LinearLayout>
