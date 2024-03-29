@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="8dp"
-    android:background="@android:drawable/toast_frame" ><!-- Use Android's default toast background -->>
+    android:background="@android:drawable/toast_frame" >
 
     <ImageView
         android:id="@+id/toast_icon"
@@ -13,7 +13,7 @@
         android:layout_height="34dp"
         android:src="@drawable/pt_l_c"
         android:scaleType="fitCenter"
-        android:layout_marginEnd="8dp"/>/> <!-- Replace with your logo drawable -->
+        android:layout_marginEnd="8dp"/>
 
     <TextView
         android:id="@+id/toast_text"

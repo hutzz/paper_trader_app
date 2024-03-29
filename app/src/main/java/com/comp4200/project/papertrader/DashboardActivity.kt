@@ -179,14 +179,10 @@ class DashboardActivity : AppCompatActivity() {
         val stockDto = StockDto(symbol, "1d", "1m")
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                // Attempt to fetch the stock data here. This is a critical operation that might fail.
-                val stockData = stockService.getStockData(stockDto) // Make sure this call is correctly implemented in your service.
-
-                // If the above call was successful, proceed to launch IndividualStockActivity.
+                val stockData = stockService.getStockData(stockDto)
                 withContext(Dispatchers.Main) {
                     val intent = Intent(this@DashboardActivity, IndividualStockActivity::class.java).apply {
                         putExtra("STOCK_TICKER", symbol)
-                        // You can also pass additional data to IndividualStockActivity as needed.
                     }
                     startActivity(intent)
                 }
